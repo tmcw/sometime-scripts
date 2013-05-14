@@ -1,0 +1,22 @@
+{
+  "name": "sometime-scripts",
+  "version": "0.0.0",
+  "description": "scripts for openstreetmap data dumps",
+  "main": "user_life.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "",
+  "keywords": [
+    "openstreetmap",
+    "sometimemachine"
+  ],
+  "author": "Tom MacWright <tom@macwright.org>",
+  "license": "BSD",
+  "dependencies": {
+    "sqlite3": "~2.1.7",
+    "optimist": "~0.4.0",
+    "canvas": "~1.0.2",
+    "pad": "0.0.4"
+  }
+}
