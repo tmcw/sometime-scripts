@@ -103,6 +103,7 @@ d3.json("sampled.json", function(error, root) {
         function position(d, i) {
           if (d.x / width < limit) return;
           if (d.x / width > limitmax) return;
+          if (d.children) return;
           total_sum += +d.value;
           total_count++;
           ctx.fillStyle = (d.children) ? '#fff' : color(d.value);
@@ -116,7 +117,7 @@ d3.json("sampled.json", function(error, root) {
         var total_count = 0;
         map.forEach(position)
         text_summary.text(
-            perc(total_sum / sample_sum / 2) + ' of changes are submitted by this ' +
+            perc(total_sum / sample_sum) + ' of changes are submitted by this ' +
             perc(total_count / sample_count) + ' of users');
     }
 
@@ -148,7 +149,6 @@ svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.svg.axis().scale(x).orient("bottom"));
-
 
 var brush = d3.svg.brush()
     .x(x)
