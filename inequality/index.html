@@ -30,6 +30,8 @@ form {
 <script src="d3.v3.min.js"></script>
 <script>
 
+var sample_coeff = 1 / 0.100303569986;
+
 var margin = {top: 40, right: 10, bottom: 10, left: 10},
     width = 960 - margin.left - margin.right,
     height = 500 - margin.top - margin.bottom;
@@ -70,7 +72,6 @@ d3.json("bins.json", function(error, bins) {
     .attr("width", 1)
     .attr("y", function(d) { return y(d.total); })
     .attr("height", function(d) { return height - y(d.total); });
-
 });
 
 </script>

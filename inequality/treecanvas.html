@@ -68,6 +68,10 @@ circle {
 var width = 800,
     height = 400;
 
+var sample_coeff = 1 / 0.100303569986;
+var sample_sum = 275065462;
+var sample_count = 30797;
+
 var color = d3.scale.category20c();
 
 var treemap = d3.layout.treemap()
@@ -92,28 +96,37 @@ d3.json("sampled.json", function(error, root) {
 
     var map = treemap.nodes(data)
 
+    var perc = d3.format("%3f.3");
     function draw() {
         ctx.fillStyle = '#fff';
         ctx.fillRect(0, 0, width, height);
+        function position(d, i) {
+          if (d.x / width < limit) return;
+          if (d.x / width > limitmax) return;
+          total_sum += +d.value;
+          total_count++;
+          ctx.fillStyle = (d.children) ? '#fff' : color(d.value);
+          ctx.fillRect(
+              ~~d.x,
+              ~~d.y,
+              ~~Math.max(0, d.dx),
+              ~~Math.max(0, d.dy));
+        }
+        var total_sum = 0;
+        var total_count = 0;
         map.forEach(position)
+        text_summary.text(
+            perc(total_sum / sample_sum / 2) + ' of changes are submitted by this ' +
+            perc(total_count / sample_count) + ' of users');
     }
 
-    draw();
 
     var n = root.length;
     var limit = 0;
     var limitmax = 1;
 
-    function position(d, i) {
-      if (d.x / width < limit) return;
-      if (d.x / width > limitmax) return;
-      ctx.fillStyle = (d.children) ? '#fff' : color(d.value);
-      ctx.fillRect(
-          ~~d.x,
-          ~~d.y,
-          ~~Math.max(0, d.dx),
-          ~~Math.max(0, d.dy));
-    }
+
+var text_summary = d3.select("body").append('div');
 
 (function() {
     var width = 700;
@@ -135,6 +148,7 @@ svg.append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(0," + height + ")")
     .call(d3.svg.axis().scale(x).orient("bottom"));
+
 
 var brush = d3.svg.brush()
     .x(x)
@@ -178,6 +192,7 @@ function brushend() {
 }
 })();
 
+    draw();
 });
 
 
