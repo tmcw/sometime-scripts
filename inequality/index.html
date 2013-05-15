@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.node {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
+}
+
+</style>
+</head>
+<body>
+<script src="d3.v3.min.js"></script>
+<script>
+
+var margin = {top: 40, right: 10, bottom: 10, left: 10},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+var color = d3.scale.category20c();
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+var x = d3.scale.linear()
+    .range([0, width], .1);
+
+var y = d3.scale.linear()
+    .range([height, 0]);
+
+d3.json("bins.json", function(error, bins) {
+  var data = d3.entries(bins).map(function(b) {
+      b.bin = +b.key * 10000;
+      b.total = +b.bin * b.value;
+      return b;
+  });
+
+  x.domain(d3.extent(data, function(d) { return d.bin; }));
+  y.domain([0, d3.max(data, function(d) { return +d.total; })]);
+
+  var sum = d3.sum(data, function(b) {
+      return +b.total;
+  });
+
+  svg.selectAll(".bar")
+    .data(data)
+  .enter().append("rect")
+    .attr("class", "bar")
+    .attr("x", function(d) { return x(d.bin); })
+    .attr("width", 1)
+    .attr("y", function(d) { return y(d.total); })
+    .attr("height", function(d) { return height - y(d.total); });
+
+});
+
+</script>
+</body>

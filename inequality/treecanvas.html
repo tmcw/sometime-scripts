@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  margin: auto;
+  position: relative;
+  width: 960px;
+}
+
+form {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+.node {
+  border: solid 1px white;
+  font: 10px sans-serif;
+  line-height: 12px;
+  overflow: hidden;
+  position: absolute;
+  text-indent: 2px;
+}
+
+svg {
+  font: 10px sans-serif;
+}
+
+circle {
+  -webkit-transition: fill-opacity 250ms linear;
+}
+
+.selecting circle {
+  fill-opacity: .2;
+}
+
+.selecting circle.selected {
+  stroke: #f00;
+}
+
+.resize path {
+  fill: #666;
+  fill-opacity: .8;
+  stroke: #000;
+  stroke-width: 1.5px;
+}
+
+.axis path, .axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.brush .extent {
+  fill-opacity: .125;
+  shape-rendering: crispEdges;
+}
+
+</style>
+</head>
+<body>
+<canvas id='c'></canvas>
+<script src="d3.v3.min.js"></script>
+<script>
+
+var width = 800,
+    height = 400;
+
+var color = d3.scale.category20c();
+
+var treemap = d3.layout.treemap()
+    .size([width, height])
+    .sort(function(a, b) {
+        return a.value - b.value;
+    })
+    .mode('squarify');
+
+var c = document.getElementById('c');
+var ctx = c.getContext('2d');
+c.width = width;
+c.height = height;
+
+d3.json("sampled.json", function(error, root) {
+    var data = {
+        value:0,
+        children: root.map(function(r) {
+            return { value: r };
+        })
+    };
+
+    var map = treemap.nodes(data)
+
+    function draw() {
+        ctx.fillStyle = '#fff';
+        ctx.fillRect(0, 0, width, height);
+        map.forEach(position)
+    }
+
+    draw();
+
+    var n = root.length;
+    var limit = 0;
+    var limitmax = 1;
+
+    function position(d, i) {
+      if (d.x / width < limit) return;
+      if (d.x / width > limitmax) return;
+      ctx.fillStyle = (d.children) ? '#fff' : color(d.value);
+      ctx.fillRect(
+          ~~d.x,
+          ~~d.y,
+          ~~Math.max(0, d.dx),
+          ~~Math.max(0, d.dy));
+    }
+
+(function() {
+    var width = 700;
+    var height = 50;
+var margin = {top: 10, right: 50, bottom: 60, left: 50};
+
+var x = d3.scale.linear()
+    .range([0, width]);
+
+var y = d3.random.normal(height / 2, height / 8);
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.svg.axis().scale(x).orient("bottom"));
+
+var brush = d3.svg.brush()
+    .x(x)
+    .extent([0, 1])
+    .on("brushstart", brushstart)
+    .on("brush", brushmove)
+    .on("brushend", brushend);
+
+var brushg = svg.append("g")
+    .attr("class", "brush")
+    .call(brush);
+
+var arc = d3.svg.arc()
+    .outerRadius(height / 2)
+    .startAngle(0)
+    .endAngle(function(d, i) { return i ? -Math.PI : Math.PI; });
+
+brushg.selectAll(".resize").append("path")
+    .attr("transform", "translate(0," +  height / 2 + ")")
+    .attr("d", arc);
+
+brushg.selectAll("rect")
+    .attr("height", height);
+
+brushstart();
+brushmove();
+
+function brushstart() {
+  svg.classed("selecting", true);
+}
+
+function brushmove() {
+  var s = brush.extent();
+  limit = s[0];
+  limitmax = s[1];
+  draw();
+}
+
+function brushend() {
+  svg.classed("selecting", !d3.event.target.empty());
+}
+})();
+
+});
+
+
+</script>
+</body>
