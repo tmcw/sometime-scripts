@@ -18,6 +18,9 @@
     "optimist": "~0.4.0",
     "canvas": "~1.0.2",
     "pad": "0.0.4",
-    "simple-statistics": "~0.3.0"
+    "simple-statistics": "~0.3.0",
+    "d3": "~3.1.7",
+    "incr-object": "0.0.0",
+    "stream-statistics": "0.0.1"
   }
 }
