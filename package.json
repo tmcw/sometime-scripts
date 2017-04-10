@@ -14,9 +14,9 @@
   "author": "Tom MacWright <tom@macwright.org>",
   "license": "BSD",
   "dependencies": {
-    "sqlite3": "~2.1.7",
-    "optimist": "~0.4.0",
-    "canvas": "~1.0.2",
-    "pad": "0.0.4"
+    "sqlite3": "~3.1.8",
+    "optimist": "~0.6.1",
+    "canvas": "~1.6.5",
+    "pad": "1.1.0"
   }
 }
